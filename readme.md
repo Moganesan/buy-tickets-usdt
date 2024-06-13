@@ -1,45 +1,22 @@
-# Boilerplate Code Integration Guide
+AvaialbleTokenPairs:
+{
+"pepe/usdt": "0xabxc"
+}
 
-This guide explains how to integrate this boilerplate code into your new project. Follow these steps to set up your project quickly.
+https://bscscan.com/address/0x55d398326f99059ff775485246999027b3197955
 
-## Steps to Import Boilerplate Code into a New Git Project
+how much pepe is 120 USDT = 1000 pepe = 120 USDT
+swap and send to paltform wallet as usdt
 
-1. **Navigate to Your New Project Directory**:
-   Make sure you are in the root directory of your new project.
-   ```sh
-   cd path/to/your/new/project
-   ```
-2. **Initialize a New Git Repository:**:
-   ```sh
-   git init
-   ```
-3. **Add the Boilerplate Repository as a Remote:**:
+- Store token addresses or pair addresses of token/USDT on BSC
+- Store a "platform address"
 
-   ```sh
-   git remote add boilerplate https://github.com/Moganesan/node-typescript-boilerplate.git
-   ```
+- User selects to deposit 25 USDT to platform address
+- - Logic to verify tx from user was sent to platform address and the correct amount
+- - Return response
 
-4. **Fetch the contents of the boilerplate repository:**:
-
-   ```sh
-   git fetch boilerplate
-   ```
-
-5. **Merge the Boilerplate Code into Your New Project:**:
-
-   ```sh
-   git merge boilerplate/master --allow-unrelated-histories
-   ```
-
-6. **Resolve Any Merge Conflicts:**
-
-   ```sh
-   git add .
-   git commit -m "Resolved merge conflicts"
-   ```
-
-7. **Remove the Boilerplate Remote:**
-
-   ```sh
-   git remote remove boilerplate
-   ```
+- User selects to deposit some other token (from token addresses storage).
+- - Calculate the exact output price for example 25USDT
+- - Swap and send that 25USDT to platform address (have minimal slippage)
+- - Logic to verify tx from user was sent to platform address and the correct amount
+- - Return response
