@@ -58,11 +58,12 @@ async function convertERC20ToUSDCTAndTransferToPlatformAddress(
     signer
   );
 
-  const amountInWrappedEth = await USDTToERC20(
-    database.tokenPairs[0].address,
-    amountInUSDC
+  const amountInWrappedEthFor1USD = await routerContract.getAmountsOut(
+    ethers.utils.formatUnits("1", 6),
+    [USDCAddress, WETHAddress]
   );
-
+  const amountInWrappedEth =
+    amountInUSDC / Number(amountInWrappedEthFor1USD[1]);
   const CheckAllowance = await checkAllowance(database.tokenPairs[0].address);
 
   if (Number(CheckAllowance) < Number(amountInWrappedEth)) {
