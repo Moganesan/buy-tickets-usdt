@@ -1,9 +1,10 @@
 import { Signer, ethers } from "ethers";
 import dotenv from "dotenv";
-import { formatEther } from "ethers/lib/utils";
+import { getDatabase, ref, set } from "firebase/database";
 import { erc20Abi } from "viem";
 import Moralis from "moralis";
 import uniswapAbi from "./uniswapAbi.json";
+import { app } from "./firebase";
 
 dotenv.config();
 
@@ -64,10 +65,7 @@ async function convertERC20ToUSDCTAndTransferToPlatformAddress(
 
   const CheckAllowance = await checkAllowance(database.tokenPairs[0].address);
 
-  if (
-    Number(CheckAllowance) <
-    Number(ethers.utils.formatUnits(amountInWrappedEth, 18))
-  ) {
+  if (Number(CheckAllowance) < Number(amountInWrappedEth)) {
     try {
       await tokenContract.approve(
         uniswapRouter,
@@ -108,6 +106,14 @@ async function convertERC20ToUSDCTAndTransferToPlatformAddress(
     );
 
     const receipt = await res.wait();
+    const db = getDatabase(app);
+    set(ref(db, "transactions/" + receipt.transactionHash), {
+      txVerified: false,
+      hash: receipt.transactionHash,
+      inputToken: WETHAddress,
+      amount: amountInWrappedEth,
+      receiverAddress: database.platformAddress,
+    });
     console.log(receipt);
   } catch (err) {
     console.log("Swap Error", err);
@@ -136,14 +142,16 @@ async function getAmountsOutMin(amountIn: string) {
 async function USDTToERC20(token: string, amountInUSDC: number) {
   const tokenPrice = await Moralis.EvmApi.token
     .getTokenPrice({
-      chain: "0x38",
+      chain: "0xa4b1",
       include: "percent_change",
       address: token,
     })
     .then((res) => res.raw);
+  console.log(tokenPrice);
 
-  const tokenToUsdtAmount = amountInUSDC / tokenPrice.usdPrice;
-  return tokenToUsdtAmount;
+  const tokenToUscAmount = amountInUSDC / tokenPrice.usdPrice;
+  console.log("Token To USDC", tokenToUscAmount);
+  return tokenToUscAmount;
 }
 
 // check token allowance
@@ -155,6 +163,7 @@ async function checkAllowance(token: string) {
     uniswapRouter
   );
 
+  console.log("Allowance", allowance);
   return allowance;
 }
 
