@@ -118,7 +118,10 @@ async function convertERC20ToUSDCTAndTransferToPlatformAddress(
 async function depositToken(signer: Signer, token: string, amount: number) {
   const tokenContract = new ethers.Contract(token, erc20Abi, signer);
   const decimals = await tokenContract.decimals();
-  await tokenContract.transfer(database.platformAddress, Number(decimals));
+  await tokenContract.transfer(
+    database.platformAddress,
+    ethers.utils.parseUnits(amount.toString(), Number(decimals))
+  );
 }
 
 // get swap token out min
