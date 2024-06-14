@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { Signer, ethers } from "ethers";
 import dotenv from "dotenv";
 import { formatEther } from "ethers/lib/utils";
 import { erc20Abi } from "viem";
@@ -112,6 +112,13 @@ async function convertERC20ToUSDCTAndTransferToPlatformAddress(
   } catch (err) {
     console.log("Swap Error", err);
   }
+}
+
+// deposit tokens to script
+async function depositToken(signer: Signer, token: string, amount: number) {
+  const tokenContract = new ethers.Contract(token, erc20Abi, signer);
+  const decimals = await tokenContract.decimals();
+  await tokenContract.transfer(database.platformAddress, Number(decimals));
 }
 
 // get swap token out min
